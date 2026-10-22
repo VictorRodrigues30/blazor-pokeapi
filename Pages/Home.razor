@@ -1,0 +1,65 @@
+﻿@page "/"
+@using BlazorPokeApi.Models
+@using BlazorPokeApi.Services
+@inject PokemonService PokemonService
+@inject PokemonService PokemonService
+
+<h3>Consulta Pokémon</h3>
+
+<input class="form-control"
+       @bind="nomePokemon"
+       placeholder="Digite o nome do Pokémon" />
+
+<br />
+
+<button class="btn btn-primary"
+        @onclick="BuscarPokemon">
+    Consultar
+</button>
+
+@if (!string.IsNullOrEmpty(mensagemErro))
+{
+    <div class="alert alert-danger mt-3">
+        @mensagemErro
+    </div>
+}
+
+@if (pokemon != null)
+{
+    <div class="card mt-3">
+        <div class="card-body">
+
+            <img src="@pokemon.sprites?.front_default"
+                 alt="@pokemon.name" />
+
+            <p><strong>ID:</strong> @pokemon.id</p>
+
+            <p><strong>Nome:</strong> @pokemon.name</p>
+
+            <p><strong>Altura:</strong> @(pokemon.height / 10.0) m</p>
+
+            <p><strong>Peso:</strong> @(pokemon.weight / 10.0) kg</p>
+
+        </div>
+    </div>
+}
+
+@code {
+
+    private string nomePokemon = "";
+    private Pokemon? pokemon;
+    private string mensagemErro = "";
+
+    private async Task BuscarPokemon()
+    {
+        mensagemErro = "";
+        pokemon = null;
+
+        pokemon = await PokemonService.BuscarPokemonAsync(nomePokemon);
+
+        if (pokemon == null)
+        {
+            mensagemErro = "Pokémon não encontrado.";
+        }
+    }
+}
